@@ -1,4 +1,4 @@
-using IdentityService.Models;
+using IdentityService.Models.UserModels;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 

@@ -4,7 +4,7 @@ using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
-using IdentityService.Models;
+using IdentityService.Models.UserModels;
 
 [ApiController]
 [Route("api/[controller]")]
@@ -22,10 +22,10 @@ public class AccountController : ControllerBase
     }
 
     [HttpPost("register")]
-    public async Task<IActionResult> Register([FromBody] RegisterModel model)
+    public async Task<IActionResult> Register([FromBody] RegisterUser registerUser)
     {
-        var user = new ApplicationUser { UserName = model.Username, Email = model.Email };
-        var result = await _userManager.CreateAsync(user, model.Password);
+        var user = new ApplicationUser { UserName = registerUser.Username, Email = registerUser.Email };
+        var result = await _userManager.CreateAsync(user, registerUser.Password);
 
         if (result.Succeeded)
         {
@@ -36,10 +36,11 @@ public class AccountController : ControllerBase
     }
 
     [HttpPost("login")]
-    public async Task<IActionResult> Login([FromBody] LoginModel model)
+    
+    public async Task<IActionResult> Login([FromBody] LoginUser loginUser)
     {
-        var user = await _userManager.FindByNameAsync(model.Username);
-        if (user != null && await _userManager.CheckPasswordAsync(user, model.Password))
+        var user = await _userManager.FindByNameAsync(loginUser.Username);
+        if (user != null && await _userManager.CheckPasswordAsync(user, loginUser.Password))
         {
             var token = GenerateJwtToken(user);
             return Ok(new { Token = token });
@@ -72,15 +73,4 @@ public class AccountController : ControllerBase
     }
 }
 
-public class RegisterModel
-{
-    public string Username { get; set; }
-    public string Email { get; set; }
-    public string Password { get; set; }
-}
 
-public class LoginModel
-{
-    public string Username { get; set; }
-    public string Password { get; set; }
-}
